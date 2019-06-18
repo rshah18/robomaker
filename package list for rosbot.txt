@@ -1,0 +1,33 @@
+Packages and dependencies for the rosbot. 
+To learn how to control and master the ROSBOT, please try to learn as much as possible about these packages:
+the pkg is the package name and the name is the name of the node used from that package
+
+
+Package list for rosbot:
+1. pkg="gmapping" type="slam_gmapping" name='gmapping_node'
+2. pkg="rosbot_description" type="serial_bridge.py" name="serial_bridge"
+3. name="map_server" pkg="map_server" type="map_server"
+4. pkg="amcl" type="amcl" name="amcl"
+5. pkg="move_base" type="move_base"
+6. pkg="joy" type="joy_node" name="joy_node"
+7. name="teleop_node" pkg="teleop_twist_joy" type="teleop_node"
+8. pkg="teleop_twist_keyboard" type="teleop_twist_keyboard.py" name="teleop_twist_keyboard"
+
+
+Dependencies for ROSBot 
+1. rospy 
+2. controller_manager
+3. joint_state_controller
+4. joint_state_publisher
+5. gazebo_ros
+6. gazebo_ros_control
+7. gazebo_plugins
+8. controller_interface
+9. hardware_interface
+10. joint_limits_interface
+11. robot_state_publisher
+12. transmission_interface
+13. diff_drive_controller
+14. rviz
+15. xacro
+

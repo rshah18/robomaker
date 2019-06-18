@@ -1,0 +1,92 @@
+robotic development cycle :
+    1. select robotics software framework 
+    2. develop robotics application 
+    3. test and simulate application 
+
+    
+gazebo has graphics engine and physics engine
+.............................................................
+Robomaker:
+    1. cloud extensions for ros:
+        getting data off device or integrating cloud services
+        created nodes in ros that encompass a lot of aws services
+    
+    2. development environment:
+        area where you can code and buid robotic application 
+
+    3. Simulation 
+
+    4. fleet management: deployment
+
+benefits of robomaker: 
+    1. Accelerated development timelines
+    2. Intelligence out of the box :
+    3. zero infrastructure provisioning:
+        no need to configure server and services  
+    4. lifecycle management 
+
+.......................................................................
+
+cloud extensions for ROS 
+
+    cloud extensions written as ROS packages automatically create connections 
+    and make api calls to aws services such as amazon lex, polly, kinesis video 
+    stream, rekognition, and cloudwatch.
+
+    lex: speech recognition 
+    polly: speech generation 
+    kinesis video streams: video streams 
+    rekognition: image and video analysis (object and face detection)
+    cloud watch : logging and monitoring (eg. sensor data to cloud)
+
+..................................................................................
+
+Development environment: 
+
+     cloud ide that uses a cloud service called cloud 9
+     start application development with zero setup effort 
+     create a robomaker development environment with a single click of a button 
+     includes pre-installed robomaker cloud extensions and sample robotics application 
+     automatic download, compile and configuration of os, development software and ROS
+
+...................................................................................
+
+Simulation:
+
+    Pre-built virtual 3D worlds provided out of box or bring your own
+    zero infrastructure to provision, configure or manage
+    run multiple simulations in parallel 
+    auto-scale based on simulation complexity
+    pay-as-you-go simulation resource consumption 
+    
+....................................................................................
+Fleet management
+
+    integrated with AWS IoT greengrass
+    built in robot registry, security, and fault-tolerance 
+    deploy robotics application over-the-air on the aws management console 
+    runs aws lambda functions on robot
+    allows versioning of your application 
+.......................................................................................
+
+Robomaker Architecture: 
+
+    Developer will leverage the aws robomaker dev environment thats where you write your code
+    to control the robot 
+
+    once a robotic application is built it will get stored in s3 bucket 
+    
+    simulation component also uses the package that got created as an output of your dev environment
+
+    gazebo can then pick up the bundle that represents the robot application for simulation purposes 
+
+    gazebo, rviz, and rqt are also running on aws and you can access them on a browser 
+    
+    you can also stream this data to cloud watch stream 
+
+    log files that get generated also get sent to s3 
+
+    fleet management sents the stuff from s3 to robots 
+
+........................................................................................
+
