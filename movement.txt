@@ -1,0 +1,12 @@
+* The geometry_msgs/Twist message express velocity in free space and consists of two fields:
+
+    Vector3 linear - represents linear part of velocity [m/s]
+    Vector3 angular - represents angular part of velocity [rad/s]
+
+* You will control ROSbot in the x-y plane by manipulating the x component of linear speed vector and the z component of angular speed vector.
+* For getting the key events and converting them to geometry_msgs/Twist messages you can use teleop_twist_keyboard.py node from package teleop_twist_keyboard.
+* Your node will subscribe to topic with geometry_msgs/Twist messages, drive the motors, read encoders and publish their state to appropriate topic. 
+
+* a node sif to read input
+* a node ravi to run control the motor by subscribing to sif 
+* 

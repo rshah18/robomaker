@@ -1,0 +1,62 @@
+For https://cloud.husarion.com/
+u: robotics@mail.fresnostate.edu
+p: BulldogBot1
+
+ssh husarion@129.8.239.223
+
+----------------------------------------------------------------------------------
+camera 
+https://github.com/orbbec/ros_astra_camera 
+
+catkin_create_pkg beginner_tutorials std_msgs rospy roscpp
+. ~/ros_workspace/devel/setup.bash
+
+* use find_object_2d node from find_object_2d package for both teaching and recognition. 
+* lauch files
+    roslaunch package_name file.launch
+
+Pull the repository into your ROS workspace git clone https://github.com/orbbec/ros_astra_camera
+
+Create astra udev rule
+
+
+
+catkin_make --pkg astra_camera
+
+roslaunch astra_launch astra.launch
+rosrun web_video_server web_video_server
+
+rostopic echo /camera/rgb/image_raw
+rosrun image_view image_view image:=/camera/rgb/image_color 
+web_video_server
+rosrun web_video_server web_video_server
+View compressed stream at: http://localhost:8080/stream?topic=/camera/rgb/image_view&type=ros_compressed
+
+msg.linear.x = 1.0;  // m/s
+msg.angular.z = 0.5; // rad/s
+
+rosbrig
+$ sudo apt-get remove
+
+
+-------------------------------------------------------------------------------------
+Running motor controller step by step
+ You will need teleop_twist_keyboard node from teleop_twist_keyboard package.
+
+Log in to your CORE2 device through remote desktop and run terminal. In first terminal window run $ roscore, in second run:
+
+/opt/husarion/tools/rpi-linux/ros-core2-client /dev/ttyCORE2
+
+This program is responsible for bridging your CORE2 to ROS network. When you are working with simulator, then above bridge is not necessary. Gazebo will subscribe appropriate topics automatically. In third terminal window run:
+
+rosrun teleop_twist_keyboard teleop_twist_keyboard.py
+
+*** ttyCORE2 runs the serial node 
+
+
+-----------------------------------------------------------------------------------------------------
+
+ * follow an object through reinforcement learning in simulation using the Coach Reinforcement Learning Library
+ * View the reward metrics in Amazon CloudWatch Metrics to explore how the machine learning model improves over time. 
+ * Customize your reward function to improve the machine learning algorithm used for training.
+ 

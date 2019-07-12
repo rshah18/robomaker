@@ -1,0 +1,31 @@
+Controlling peripherals on ROSbot 2.0
+
+https://github.com/husarion/hFramework
+https://husarion.com/software/hframework/
+
+https://husarion.com/core2/api_reference/classes.html
+
+We decided to no longer support Python port for hFramework. Our goal is to provide hard real-time controller, and C++ working together with RTOS is a great combination. Python running on STM32 microcontroller is not very real-time sollution. But it worked before :slight_smile:
+
+You can write ROS software running on SBC using Python, but you don’t need hFramework o this level. Standard ROS libraries are enough.
+ if you want to use python, develop your application in ROS.
+
+
+ROSbot is an autonomous rover-like robot made by the company Husarion. There are two versions of this robot, "ROSbot 2.0" and "2.0 PRO". This robot can be used for variety of application 
+such as mapping and navigation, inspections etc.
+
+THe main control
+
+LED
+MOTORS
+GPIO 
+
+camera 
+
+hFramework is a library for creating software for mechatronic devices
+
+It has the following ports:
+
+STM32 port for hardware created by Husarion - CORE2, CORE2mini and RoboCORE boards
+Linux port for Raspberry Pi and Tinkerboard (experimental)
+ESP32 port (experimental)

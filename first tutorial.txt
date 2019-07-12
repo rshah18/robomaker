@@ -151,7 +151,17 @@ vim tutorial_2.launch
 </launch>
 -------------------------------
 
-* gazebo sim 
+* gazebo sim ----------------------------------------------------------------------------------------------------------------
 
 roslaunch tutorial_pkg tutorial_2.launch use_gazebo:=true
 
+* Your node can receive parameters, they are used to customize behaviour of node
+ e.g. subscribed topic name, device name or transmission speed for serial port.
+ To receive the parameter you need a variable to store its value
+ To add parameter for node, you will need to add <param> tag inside <node> tag in tutorial_pkg_node.launch file
+
+ <node pkg="tutorial_pkg" type="tutorial_pkg_node" name="tutorial_pkg_node" output="screen">
+    <param name="print_brightness" type="bool" value="true" />
+    </node>
+
+    
