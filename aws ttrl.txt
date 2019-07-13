@@ -90,3 +90,25 @@ Robomaker Architecture:
 
 ........................................................................................
 
+Pricing structure: 
+    * cloud extensions for ros: when ros uses cloud services you get charged the standard price. 
+    * customer pay only for underlaying compute and storage resources. (Ec2, EBS volumes)
+    * simulation: pricing is based on number of simulation units which is metered at minute granularity
+    * fleet management: pay for underlaying greengrass resources. $0.16 per active machine per month
+
+-----------------------------------------------------------------------------------------------
+
+steps: 
+    * Development environment:
+    * robot applications and simulation applications are binaries created out of development environment
+    * 
+    * creating an environment:
+        1. On robomaker, create environment
+        2. Give a name; instance type: m4.large or other,
+        3. choose a vpc, and subnet
+        4. it creates a cloud 9 environment
+
+    * It also gives full console access to the system that is hosting it
+    * building and bundling 
+
+    

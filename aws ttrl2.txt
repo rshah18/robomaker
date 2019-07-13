@@ -1,0 +1,214 @@
+api references 
+
+robomaker 
+    * colcon build - like catkin build
+    * colcon bundle: create a new bundle configuration 
+    * simulation: create a new simulation job configuration
+    * workflow : create a new workflow of previously defined build, bundle, and simulation operations
+    
+     * simulation job output: s3 bucket
+        when we do build and bundle in the robomaker console, the packages get placed in s3 bucket,
+        so the simulation engine knows where to find it
+
+    * rostopic echo rekognized_people 
+
+    *      $ mkdir -p /tmp/workspace/src     # Make a workspace directory with a src subdirectory
+            $ cd /tmp/workspace               # Change directory to the workspace root
+            $ <...>                           # Populate the `src` directory with packages
+            $ colcon list -g                  # List all packages in the workspace and their dependencies
+            $ colcon build                    # Build all packages in the workspace
+            $ colcon test                     # Test all packages in the workspace
+            $ colcon test-result --all        # Enumerate all test results
+            $ . install/local_setup.bash      # Setup the environment to use the built packages
+            $ <...>                           # Use the built packages
+-----------------------------------------------------------------------------------------
+
+Deployment: 
+    
+    * under fleet management, 'robots' are the phyical robots, we can group them into "fleets"
+    * You can create a robot, under robots, your robot must authenticate with aws
+    * create robot, name, architecture, aws greeengrass group, IAM role (greeengrass permission), 
+    * download security resources for your robot. they contain keys that verify and authenticate with greengrass service
+    * the greengrass core software must be installed on the physical device, download it
+    * robomaker uses greengrass to deploy applications on the robot
+    
+    * create fleet, name, register new robot, (robots can live in more than one fleet)
+    * create Deployment, fleet, applications, package name, launch file to be deployed
+    * single launch file and include multiple launch files
+    * you can set concurrent deployment percentage
+    * failure threshold percentage; if these many failed then stop deployment
+
+    * on the device, "roslaunch package launchfile " that was deployed. 
+    
+    * when a robot application is deployed to a physical robot
+        * lambda contains logic needed for deployment (robot application bundle, ros launch, other logics) 
+            they get updated in your account
+
+        * grengrass is notified to run the custom lambda on the target robot. 
+            if a lambda is running when the command is recieved, all ros process on the robot are terminated
+        
+        * the lamda downloads and uncompresses the robot application bundle from the aws s3, 
+            if pre-launch was specified, it is run, lambda starts ros using launch file and packages specified. 
+            if post launch was specified, it is run after ros is started. 
+        
+-------------------------------------------------------------------------------------------------------
+AWS robotics:
+
+    * Node (tts)
+        * tts ROS node enables a robot to speak with a human voice by providing a Text-To-Speech service.
+        * this package listens to a speech topic, submits text to the Amazon Polly cloud service to generate an audio stream file,
+         retrieves the audio stream from Amazon Polly, and plays the audio stream via the default output device.
+
+        * To run this application you will need an IAM user with the following permissions:
+                  lex:PostContent
+                    lex:PostText
+                    polly:SynthesizeSpeech
+
+        * First, you must create a LexBot by importing the JSON file robot_ws/src/voice_interaction_robot/config/VoiceInteractionRobot.json into Lex
+        * After the import is complete you must build the bot, and then publish it to an alias.
+        * edit the file robot_ws/src/voice_interaction_robot/config/lex_config.yaml changing the bot_name and bot_alias variables to the bot you published in the Lex console.
+        * source robot_ws/install/local_setup.sh
+            roslaunch voice_interaction_robot deploy_voice_interaction.launch
+            source robot_ws/install/local_setup.sh
+            robot_ws/src/voice_interaction_robot/scripts/text_input.py
+
+        * nodes : /lex_node
+                        /polly_node
+                         /synthesizer_node
+                    /tts_node
+
+        * useful topics: /clock
+                        /cmd_vel
+                        /tts/cancel
+                        /tts/feedback
+                        /tts/goal
+                        /tts/result
+                        /tts/status
+                        /audio_input
+                        /text_input
+                        /wake_word
+                        /audio_output
+                        /text_output
+                        /voice_interaction_node/fulfilled_command
+                        /voice_output_node/speak
+
+    *  Node (lex_node)
+
+        * The ROS lex_node node enables a robot to comprehend natural language commands by voice or 
+            textual input and respond through a set of actions, which an AWS Lex Bot maps to ROS messages.
+        
+        * this node provides a ROS interface to communicate with a specified Amazon Lex bot (configured via lex_config.yaml) and requires configuration of AWS credentials.
+
+        *  The Amazon Lex bot needs to be defined with responses and slots for customer prompts.
+
+        * Delivering a voice-enabled customer experience (e.g. “Robot, go to x”) will require dialog facilitation, wake word, and offline processing which are not yet provided by this integration.
+
+        *  A wake word would trigger the dialog facilitation node to start recording and send the audio to Amazon Lex, then prompt the user for more information should Amazon Lex require it.
+
+        *  With Amazon Lex, the same deep learning technologies that power Amazon Alexa are now available to any developer,
+             enabling you to quickly and easily build sophisticated, natural language, conversational bots (“chatbots”).
+        
+        *   This node requires an IAM User with the following permission policy:
+                      AmazonLexRunBotsOnly
+        
+        *     sudo apt-get install -y ros-$ROS_DISTRO-lex-node
+
+        *   cd ~/ros-workspace/src
+            git clone https://github.com/aws-robotics/lex-ros1.git -b release-v{MAJOR.VERSION}
+              cd ~/ros-workspace 
+                sudo apt-get update && rosdep update
+                 rosdep install --from-paths src --ignore-src -r -y
+                   cd ~/ros-workspace && colcon build
+                     source ~/ros-workspace/install/setup.bash
+                       colcon build --packages-select lex_node --cmake-target tests
+                         colcon test --packages-select lex_node && colcon test-result --all
+
+        * 
+        -------------------------------------------------------------------------------------------------------------------------
+        * kinesis_video_streamer
+
+            * The Kinesis Video Streams ROS package enables robots to stream video to the cloud for analytics, playback, and archival use
+
+            * the nodes provided make it possible to encode & stream image data (e.g. video feeds and LIDAR scans) from a ROS “Image” topic to the cloud,
+             enabling you to view the live video feed through the Kinesis Video Console, consume the stream via other applications,
+              or perform intelligent analysis, face detection and face recognition using Amazon Rekognition.
+
+            *  node will transmit standard sensor_msgs::Image data from ROS topics to Kinesis Video streams, 
+                optionally encoding the images as h264 video frames along the way (using the included h264_video_encoder),
+                 and optionally fetches Amazon Rekognition results from corresponding Kinesis Data Streams and publishing them to local ROS topics.
+                
+            * The IAM user will need permissions for the following actions:
+
+                kinesisvideo:CreateStream
+                kinesisvideo:TagStream
+                kinesisvideo:DescribeStream
+                kinesisvideo:GetDataEndpoint
+                kinesisvideo:PutMedia
+            
+            * kinesis:ListShards
+                kinesis:GetShardIterator
+                kinesis:GetRecords
+
+            * sudo apt-get install -y ros-$ROS_DISTRO-kinesis-video-streamer
+                  mkdir -p ~/ros-workspace/src
+                   cd ~/ros-workspace/src
+                    git clone https://github.com/aws-robotics/kinesisvideo-ros1.git -b release-v{MAJOR.VERSION}
+                      cd ~/ros-workspace 
+                        sudo apt-get update && rosdep update
+                          rosdep install --from-paths src --ignore-src -r -y
+                            cd ~/ros-workspace && colcon build  
+                            source ~/ros-workspace/install/setup.bash
+                              colcon build --packages-select kinesis_video_streamer --cmake-target tests
+                                colcon test --packages-select kinesis_video_streamer kinesis_manager && colcon test-result --all
+
+--------------------------------------------------------------------------------------------------------------------------------------------------
+
+    *  ROS relies on a Computation Graph, which is a collection of concurrent processes (nodes) that perform a task like controlling wheel motors or communicating by passing messages.
+    * http://www.ros.org/browse/list.php FOR PACKAGE LIST
+
+    * AWS RoboMaker cloud extensions is a collection of ROS packages you can use with your robot and simulation applications to easily access AWS. 
+        Amazon CloudWatch Metrics — Stream sensor data, performance metrics, and other information from your robots. View data over time and set alarms to receive alerts if data reaches certain thresholds (like low battery).
+
+        Amazon CloudWatch Logs — Stream logging data from your robot fleets to a central place for easy analysis. Search data generated by hundreds of robots in one place.
+
+        Amazon Kinesis Video Streams — Stream real-time video from your robot into AWS.
+
+        Amazon Lex — Create a robot with engaging user experiences and lifelike conversation.
+
+        Amazon Polly — Turn text into speech using lifelike voices in different languages.
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------
+ cloud 9
+
+    * three pillers of software development:
+        1. run ( compute, storage) 
+        2. release (codecommit, codebuild, codedeploy, codepipeline, codestar)
+        3. create (cloud 9 writing, debugging, building)
+
+    * 
+
+    * cloud 9 is an ide solution for:
+        * Rely on local machine' hardware/configuration
+        *hard to multitask on various projects
+        * difficult to work on multiple locations
+        * cumbersome to setup development environment
+        * install plugins, configure stack, etc
+        * collaberations 
+        * ides have not caught up to needs of serverless applications 
+
+    * cloud 9
+        * runs on a browser 
+        * one environment has one particular set of configurations 
+        * use for serverless application 
+        * direct terminal acess to aws services 
+        * aws cli right out of box 
+        * environment: typer, owner, 
+        * create an environment, name, 
+        * two environment types: 
+            1. EC2 
+            2. SSH 
+
+        * instance type: 
+        * Cost-saving settings,
+        
+        * https://www.youtube.com/watch?v=FvclLeg2vEQ
